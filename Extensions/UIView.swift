@@ -1,136 +1,82 @@
 
+//  This is demo codes for fun only
+//  Created by Pulkit on 17/02/20.
+
 import Foundation
 import UIKit
 
-extension UIView{
-    public func removeAllConstraints() {
-        var _superview = self.superview
-        
-        while let superview = _superview {
-            for constraint in superview.constraints {
-                
-                if let first = constraint.firstItem as? UIView, first == self {
-                    superview.removeConstraint(constraint)
-                }
-                
-                if let second = constraint.secondItem as? UIView, second == self {
-                    superview.removeConstraint(constraint)
-                }
-            }
-            
-            _superview = superview.superview
+
+
+extension UIView {
+  
+    var heightConstaint: NSLayoutConstraint? {
+        get {
+            return constraints.first(where: {
+                $0.firstAttribute == .height && $0.relation == .equal
+            })
         }
-        
-        self.removeConstraints(self.constraints)
-        self.translatesAutoresizingMaskIntoConstraints = true
+        set { setNeedsLayout() }
     }
+    
+    var topConstaint: NSLayoutConstraint? {
+        get {
+            return constraints.first(where: {
+                $0.firstAttribute == .top && $0.relation == .equal
+            })
+        }
+        set { setNeedsLayout() }
+    }
+    
+    var bottomConstaint: NSLayoutConstraint? {
+        get {
+            return constraints.first(where: {
+                $0.firstAttribute == .bottomMargin && $0.relation == .equal
+            })
+        }
+        set { setNeedsLayout() }
+    }
+    
+    var widthConstaint: NSLayoutConstraint? {
+        get {
+            return constraints.first(where: {
+                $0.firstAttribute == .width && $0.relation == .equal
+            })
+        }
+        set { setNeedsLayout() }
+    }
+    
+    func pathCurvedForView(givenView: UIView, curvedPercent:CGFloat) ->UIBezierPath
+    {
+        let arrowPath = UIBezierPath()
+        arrowPath.move(to: CGPoint(x:0, y:0))
+        arrowPath.addLine(to: CGPoint(x:givenView.bounds.size.width, y:0))
+        arrowPath.addLine(to: CGPoint(x:givenView.bounds.size.width, y:givenView.bounds.size.height - (givenView.bounds.size.height*curvedPercent)))
+        arrowPath.addQuadCurve(to: CGPoint(x:0, y:givenView.bounds.size.height - (givenView.bounds.size.height*curvedPercent)), controlPoint: CGPoint(x:givenView.bounds.size.width/2, y:givenView.bounds.size.height))
+        arrowPath.addLine(to: CGPoint(x:0, y:0))
+        arrowPath.close()
+        
+        return arrowPath
+    }
+    func addCurves(curvedPercent : CGFloat){
+        let shapeLayer = CAShapeLayer(layer: self.layer)
+        shapeLayer.path = self.pathCurvedForView(givenView: self,curvedPercent: curvedPercent).cgPath
+        shapeLayer.frame = self.bounds
+        shapeLayer.masksToBounds = true
+        self.layer.mask = shapeLayer
+    }
+    
     func fadeIn() {
         // Move our fade out code from earlier
-        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIView.AnimationOptions.curveEaseIn, animations: {
             self.alpha = 1.0 // Instead of a specific instance of, say, birdTypeLabel, we simply set [thisInstance] (ie, self)'s alpha
         }, completion: nil)
     }
     
     func fadeOut() {
-        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.alpha = 0.5
         }, completion: nil)
     }
-    
-    func constrainCentered(_ subview: UIView) {
-        
-        subview.translatesAutoresizingMaskIntoConstraints = false
-        
-        let verticalContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .centerY,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .centerY,
-            multiplier: 1.0,
-            constant: 0)
-        
-        let horizontalContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .centerX,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .centerX,
-            multiplier: 1.0,
-            constant: 0)
-        
-        let heightContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .notAnAttribute,
-            multiplier: 1.0,
-            constant: subview.frame.height)
-        
-        let widthContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .width,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .notAnAttribute,
-            multiplier: 1.0,
-            constant: subview.frame.width)
-        
-        addConstraints([
-            horizontalContraint,
-            verticalContraint,
-            heightContraint,
-            widthContraint])
-    }
-    
-    func constrainToEdges(_ subview: UIView) {
-        
-        subview.translatesAutoresizingMaskIntoConstraints = false
-        
-        let topContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .top,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .top,
-            multiplier: 1.0,
-            constant: 0)
-        
-        let bottomConstraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .bottom,
-            multiplier: 1.0,
-            constant: 0)
-        
-        let leadingContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .leading,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .leading,
-            multiplier: 1.0,
-            constant: 0)
-        
-        let trailingContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .trailing,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .trailing,
-            multiplier: 1.0,
-            constant: 0)
-        
-        addConstraints([
-            topContraint,
-            bottomConstraint,
-            leadingContraint,
-            trailingContraint])
-    }
-    
     
     var safeTopAnchor: NSLayoutYAxisAnchor {
         if #available(iOS 11.0, *) {
@@ -166,7 +112,7 @@ extension UIView{
     
     func shake() {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         animation.duration = 0.6
         animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0 ]
         layer.add(animation, forKey: "shake")
@@ -196,9 +142,9 @@ extension UIView{
         }
     }
     
-    @IBInspectable var TWBorderColor:UIColor{
+    @IBInspectable var NewBorderColor:UIColor{
         get{
-            return self.TWBorderColor
+            return self.NewBorderColor
         }
         set{
             self.layer.borderColor = newValue.cgColor
@@ -206,7 +152,7 @@ extension UIView{
         }
     }
     
-    var TWRoundDynamic:Bool{
+    var NewRoundDynamic:Bool{
         get{
             return false
         }
@@ -224,7 +170,7 @@ extension UIView{
         self.layer.masksToBounds = true;
     }
     
-    var TWRound:Bool{
+    var NewRound:Bool{
         get{
             return false
         }
@@ -236,7 +182,7 @@ extension UIView{
         }
     }
     
-    var TWShadow:Bool{
+    var NewShadow:Bool{
         get{
             return false
         }
@@ -250,7 +196,7 @@ extension UIView{
         }
     }
     
-    var TWclipsToBounds:Bool{
+    var NewclipsToBounds:Bool{
         get{
             return false
         }
@@ -266,9 +212,17 @@ extension UIView{
     
     func shadowWithcell() {
         self.layer.masksToBounds = false
+        self.layer.shadowColor = UIColor.lightGray.cgColor
+        self.layer.shadowOffset = CGSize(width: 0.0, height:0.0)
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowRadius = 6.0
+    }
+    
+    func shadowWithHeader() {
+        self.layer.masksToBounds = false
         //self.layer.shadowColor = color.lightGray.value.cgColor
         self.layer.shadowOffset = CGSize(width: 0.0, height:0.0)
-        self.layer.shadowOpacity = 0.8
+        self.layer.shadowOpacity = 0.2
         self.layer.shadowRadius = 6.0
     }
     
@@ -286,11 +240,29 @@ extension UIView{
         self.layer.shadowOpacity = alph
     }
     
+    func shadowWithOffset(size:CGSize,alph:Float,radius:CGFloat,color: UIColor){
+        self.layer.masksToBounds = false
+        self.layer.shadowColor = color.cgColor
+        self.layer.shadowOffset = size
+        self.layer.shadowOpacity = alph
+        self.layer.shadowRadius = radius
+    }
+    
+    class func shadowWithOffsetView(viewObj: UIView, size:CGSize,alph:Float,radius:CGFloat,color: UIColor){
+        viewObj.layer.masksToBounds = false
+        viewObj.layer.shadowColor = color.cgColor
+        viewObj.layer.shadowOffset = size
+        viewObj.layer.shadowOpacity = alph
+        viewObj.layer.shadowRadius = radius
+    }
+
+    
     func shadowBottom(alph:Float){
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 1.0, height: 0)
         self.layer.shadowOpacity = alph
+        
     }
     
     func addShadowProfile(to edges:[UIRectEdge], radius:CGFloat,toColor : UIColor){
@@ -384,10 +356,28 @@ extension UIView{
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = bounds
         gradientLayer.colors = [color1.cgColor, color2.cgColor]
-        gradientLayer.locations = [0.5 , 0.5] //here you can set percentage of color part are display betwin 0 to 1
+        gradientLayer.locations = [0.5 , 0.5] //here you can set percentage of color part are display beNewin 0 to 1
         self.layer.insertSublayer(gradientLayer, at: 0)
     }
     
+    func roundCorners(_ corners:UIRectCorner, radius: CGFloat) {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        self.layer.mask = mask
+        self.layoutIfNeeded()
+
+    }
+    func roundCorners(topLeft: CGFloat = 0, topRight: CGFloat = 0, bottomLeft: CGFloat = 0, bottomRight: CGFloat = 0) {//(topLeft: CGFloat, topRight: CGFloat, bottomLeft: CGFloat, bottomRight: CGFloat) {
+        let topLeftRadius = CGSize(width: topLeft, height: topLeft)
+        let topRightRadius = CGSize(width: topRight, height: topRight)
+        let bottomLeftRadius = CGSize(width: bottomLeft, height: bottomLeft)
+        let bottomRightRadius = CGSize(width: bottomRight, height: bottomRight)
+        let maskPath = UIBezierPath(shouldRoundRect: bounds, topLeftRadius: topLeftRadius, topRightRadius: topRightRadius, bottomLeftRadius: bottomLeftRadius, bottomRightRadius: bottomRightRadius)
+        let shape = CAShapeLayer()
+        shape.path = maskPath.cgPath
+        layer.mask = shape
+    }
     func addSubviews(views: UIView...) {
         for view in views {
             self.addSubview(view)
@@ -397,7 +387,7 @@ extension UIView{
     func layoutRelativeTo(otherView: AnyObject, insets: Inset...) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for inset in insets {
-            constraints.append(NSLayoutConstraint(item: self, attribute: inset.attr, relatedBy: NSLayoutRelation.equal, toItem: otherView, attribute: inset.attr, multiplier: 1.0, constant: inset.value))
+            constraints.append(NSLayoutConstraint(item: self, attribute: inset.attr, relatedBy: NSLayoutConstraint.Relation.equal, toItem: otherView, attribute: inset.attr, multiplier: 1.0, constant: inset.value))
         }
         return constraints
     }
@@ -405,18 +395,15 @@ extension UIView{
     private static let kRotationAnimationKey = "rotationanimationkey"
     
     func rotate(duration: Double = 1) {
-        DispatchQueue.main.async {
-            if self.layer.animation(forKey: UIView.kRotationAnimationKey) == nil {
-                let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
-                
-                rotationAnimation.fromValue = Float.pi
-                rotationAnimation.toValue = Double.pi * 3.0
-                rotationAnimation.duration = duration
-                rotationAnimation.repeatCount = Float.infinity
-                self.layer.add(rotationAnimation, forKey: UIView.kRotationAnimationKey)
-            }
+        if layer.animation(forKey: UIView.kRotationAnimationKey) == nil {
+            let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
+            
+            rotationAnimation.fromValue = Float.pi
+            rotationAnimation.toValue = Double.pi * 3.0
+            rotationAnimation.duration = duration
+            rotationAnimation.repeatCount = Float.infinity
+            layer.add(rotationAnimation, forKey: UIView.kRotationAnimationKey)
         }
-
     }
     
     func stopRotating() {
@@ -425,7 +412,12 @@ extension UIView{
         }
     }
     
-
+    func loadNib() -> UIView {
+        let bundle = Bundle(for: type(of: self))
+        let nibName = type(of: self).description().components(separatedBy: ".").last!
+        let nib = UINib(nibName: nibName, bundle: bundle)
+        return nib.instantiate(withOwner: self, options: nil).first as! UIView
+    }
        
 }
 

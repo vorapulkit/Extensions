@@ -1,4 +1,8 @@
 
+//  This is demo codes for fun only
+//  Created by Pulkit on 17/02/20.
+
+
 import Foundation
 import UIKit
 
@@ -17,7 +21,7 @@ extension UITextField
         
         let imageView = UIImageView(frame: Frame)
         imageView.image = UIImage(named: imageName)
-        imageView.tintColor = getThemeColor()
+        imageView.tintColor = defaultThemeColor()
         
         View.addSubview(imageView)
         
@@ -54,8 +58,8 @@ extension UITextField
         self.layer.borderWidth = 1.0
     }
     
-    func setPlaceHolderColor(color : UIColor){
-            self.attributedPlaceholder = NSAttributedString(string: self.placeholder!, attributes: [NSAttributedStringKey.foregroundColor :color,NSAttributedStringKey.font : UIFont.init(name: Font.FontName.ProximaNova_Semibold.rawValue, size: 16) as Any])
+    func attributedPlaceholder(color : UIColor){
+        self.attributedPlaceholder = NSAttributedString(string: self.placeholder!, attributes: [NSAttributedString.Key.foregroundColor :color,NSAttributedString.Key.font : self.font as Any])
     }
     
     func borderWidth(size:CGFloat){
@@ -108,9 +112,11 @@ extension UITextField
     func rightButton(imageName:String) {
         let btn = UIButton.init(type: .custom)
         btn.setImage(UIImage.init(named: imageName), for: .normal)
-        //  btn.frame = CGRect.init(x:  (ScreenSize.SCREEN_WIDTH - self.frame.size.height), y: 0, width: self.frame.size.height, height:  self.frame.size.height)
+        btn.setTitleColor(UIColor.white, for: .normal)
+        //btn.frame = CGRect.init(x:  (ScreenSize.SCREEN_WIDTH - self.frame.size.height), y: 0, width: self.frame.size.height, height:  self.frame.size.height)
         self.rightView = btn;
         self.rightViewMode = .always
-        // return btn
+        
     }
+    
 }
